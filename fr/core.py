@@ -8,7 +8,7 @@ class Fr():
     def __init__(self, region="us-west-2"):
         self.client = boto3.client('rekognition', region_name=region)
 
-    def detect_facs(self, sourceFile):
+    def detect_faces(self, sourceFile):
         imageSource = open(sourceFile, 'rb')
 
         response = self.client.detect_faces(
