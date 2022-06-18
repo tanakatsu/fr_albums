@@ -2,6 +2,7 @@ import os
 import glob
 import shutil
 from argparse import ArgumentParser
+from botocore.exceptions import import ClientError
 from fr.core import Fr
 from fr.util import draw_matched_face_positions
 
@@ -25,6 +26,7 @@ print("\n")
 
 fr = Fr(region=args.region)
 
+reject_target_files = []
 for face_template_file in face_template_files:
     user_name = os.path.splitext(os.path.basename(face_template_file))[0]
     user_output_dir = user_name
@@ -34,8 +36,15 @@ for face_template_file in face_template_files:
     for album_dir in album_dirs:
         match_cnt = 0
         target_files = glob.glob(os.path.join(args.target_pictures_dir, album_dir, "*.jpg"))
+        target_files = [filename for filename in target_files if filename not in reject_target_files]
         for target_file in target_files:
-            res = fr.compare_faces(face_template_file, target_file, args.th)
+            try:
+                res = fr.compare_faces(face_template_file, target_file, args.th)
+            except ClientError as e:
+                print(f"Couldn't match faces from {face_template_file} to {target_file}.")
+                reject_target_files.append(target_file)
+                continue
+
             if len(res["FaceMatches"]):
                 user_album_output_dir = os.path.join(args.output_dir, user_output_dir, album_dir)
                 os.makedirs(user_album_output_dir, exist_ok=True)
