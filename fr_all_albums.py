@@ -2,6 +2,7 @@ import os
 import glob
 import shutil
 from argparse import ArgumentParser
+from tqdm import tqdm
 from botocore.exceptions import import ClientError
 from fr.core import Fr
 from fr.util import draw_matched_face_positions
@@ -37,7 +38,7 @@ for face_template_file in face_template_files:
         match_cnt = 0
         target_files = glob.glob(os.path.join(args.target_pictures_dir, album_dir, "*.jpg"))
         target_files = [filename for filename in target_files if filename not in reject_target_files]
-        for target_file in target_files:
+        for target_file in tqdm(target_files):
             try:
                 res = fr.compare_faces(face_template_file, target_file, args.th)
             except ClientError as e:
