@@ -47,12 +47,14 @@ for face_template_file in face_template_files:
                 continue
 
             if len(res["FaceMatches"]):
-                user_album_output_dir = os.path.join(args.output_dir, user_output_dir, album_dir)
+                user_album_output_dir = os.path.join(args.output_dir, "raw", user_output_dir, album_dir)
                 os.makedirs(user_album_output_dir, exist_ok=True)
                 shutil.copy(target_file, user_album_output_dir)
 
-                complementary_file = os.path.join(user_album_output_dir, "__" + os.path.basename(target_file))
-                draw_matched_face_positions(target_file, complementary_file, res['FaceMatches'])
+                user_marker_output_dir = os.path.join(args.output_dir, "marker", user_output_dir, album_dir)
+                os.makedirs(user_marker_output_dir, exist_ok=True)
+                marked_file = os.path.join(user_marker_output_dir, os.path.basename(target_file))
+                draw_matched_face_positions(target_file, marked_file, res['FaceMatches'])
                 match_cnt += 1
 
         print(f"{album_dir}: match cnt={match_cnt}")
