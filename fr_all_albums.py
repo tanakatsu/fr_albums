@@ -3,7 +3,7 @@ import glob
 import shutil
 from argparse import ArgumentParser
 from tqdm import tqdm
-from botocore.exceptions import import ClientError
+from botocore.exceptions import ClientError
 from fr.core import Fr
 from fr.util import draw_matched_face_positions
 
