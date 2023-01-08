@@ -3,6 +3,8 @@
 
 import boto3
 import sys
+from .util import get_resized_img_bytes
+
 
 class Fr():
     def __init__(self, region="us-west-2"):
@@ -16,12 +18,15 @@ class Fr():
         return response
 
 
-    def compare_faces(self, sourceFile, targetFile, th=80):
+    def compare_faces(self, sourceFile, targetFile, th=80, maxsize=2048):
         imageSource = open(sourceFile,'rb')
-        imageTarget = open(targetFile,'rb')
+        imageSourceBytes = imageSource.read()
+
+        # Rekognition accepts less than 5MB images. So, we'll shrink image size.
+        imageTargetBytes = get_resized_img_bytes(targetFile, maxsize)
 
         response = self.client.compare_faces(SimilarityThreshold=th,
-                                      SourceImage={'Bytes': imageSource.read()},
-                                      TargetImage={'Bytes': imageTarget.read()})
+                                      SourceImage={'Bytes': imageSourceBytes},
+                                      TargetImage={'Bytes': imageTargetBytes})
         return response
 
