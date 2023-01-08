@@ -22,6 +22,7 @@ face_template_files = sorted(glob.glob(os.path.join(args.template_dir, "*.jpg"))
 print(f"Found {len(face_template_files)} templates")
 
 album_dirs = sorted(os.listdir(args.target_pictures_dir))
+album_dirs = [x for x in album_dirs if os.path.isdir(os.path.join(args.target_pictures_dir, x))]
 print(f"Found {len(album_dirs)} albumns", album_dirs)
 print("\n")
 
@@ -37,6 +38,7 @@ for face_template_file in face_template_files:
     for album_dir in album_dirs:
         match_cnt = 0
         target_files = glob.glob(os.path.join(args.target_pictures_dir, album_dir, "*.jpg"))
+        target_files.extend(glob.glob(os.path.join(args.target_pictures_dir, album_dir, "*.JPG")))
         target_files = [filename for filename in target_files if filename not in reject_target_files]
         for target_file in tqdm(target_files):
             try:
